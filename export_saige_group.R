@@ -5,12 +5,13 @@ null_omit <- function(lst) {
 
 library(data.table)
 files <- list.files("~/Projects/27_genesets_public/genesets_public/exported/", full.names=TRUE, pattern="txt.gz$")
+files <- files[!grepl("saige", files)]
 
 for (f in files){
   write(paste("reading", f, "and writing saige group files.."))
   file_basename <- gsub(".txt.gz$","",(basename(f)))
-  outfile <- file.path("exported",paste0(file_basename,".saige_group.txt.gz"))
-
+  outfile <- file.path("exported",paste0(file_basename,".saige_group.txt"))
+  d <- fread(f)
   # export geneset and gene id
   stopifnot(c("geneset","gene_id") %in% colnames(d))
   all_genesets <- unique(d$geneset)
@@ -22,8 +23,10 @@ for (f in files){
     return(paste0(c(row1, row2), collapse = '\n'))
   })
   out <- null_omit(out)
+
   write(paste("Writing to", outfile), stdout())
   writeLines(paste(out, collapse = '\n'), outfile)
+  system(paste("gzip -f", outfile), intern = FALSE)
 }
 
 

@@ -1,0 +1,7 @@
+# in R
+ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+human <- getBM(attributes = c('ensembl_gene_id','hgnc_symbol','hgnc_id','chromosome_name','start_position','end_position', 'gene_biotype'), mart = ensembl)
+human <- human[human$hgnc_symbol != '' &  human$gene_biotype %in% 'protein_coding',]
+write.table(human, '~/Projects/08_genesets/genesets/data/biomart/protein_coding_genes.tsv', quote = F, row.names = F)
+
+
